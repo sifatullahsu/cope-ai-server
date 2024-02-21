@@ -1,4 +1,5 @@
 import { scheduleJob } from 'node-schedule'
+import config from '../../../config'
 import { ICreateData, IGetAll, IGetData } from '../../../interface/main'
 import { User } from '../user/user.model'
 import { IContent } from './content.interface'
@@ -38,11 +39,17 @@ const createData: ICreateData<IContent> = async data => {
   const result = await Content.create(data)
 
   if (user.scheduleHour && result._id) {
-    // const fifteenSecond = new Date(new Date().getTime() + 15 * 1000)
-
     const job = scheduleJob(schedule, async () => {
       await Content.findByIdAndUpdate(result._id, { status: 'success' })
-      console.log(`${data.title} - ${new Date().toISOString()}`)
+
+      const pageId = config.pageId
+      const graphToken = config.graphToken
+      const api = `https://graph.facebook.com/v19.0/${pageId}/photos`
+      const message = `${data.title}%0A%0A${data.description}`
+
+      await fetch(`${api}?message=${message}&url=${data.image}&access_token=${graphToken}`, {
+        method: 'POST'
+      })
 
       job.cancel()
     })

@@ -13,7 +13,9 @@ const config = {
     refreshSecret: process.env.JWT_REFRESH_SECRET,
     expiresIn: process.env.JWT_EXPIRES_IN,
     refreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN
-  }
+  },
+  pageId: process.env.PAGE_ID,
+  graphToken: process.env.GRAPH_TOKEN
 }
 
 export default config
